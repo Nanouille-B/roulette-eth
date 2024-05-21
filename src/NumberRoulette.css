@@ -1,0 +1,86 @@
+/* src/NumberRoulette.css */
+
+.roulette-container {
+  text-align: center;
+  padding: 20px;
+}
+
+.wheel-container {
+  position: relative;
+  width: 500px;
+  height: 500px;
+  margin: 0 auto;
+}
+
+.wheel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 5px solid #333;
+  overflow: hidden;
+  transition: transform 2s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.slot {
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  top: 0;
+  left: 50%;
+  transform-origin: 0 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  color: white;
+  clip-path: polygon(100% 0, 0 0, 0 100%);
+}
+
+.slot .inner-slot {
+  position: absolute;
+  top: 25%; /* Adjust the position of the numbers */
+  left: 50%; /* Adjust the position of the numbers */
+  transform: translate(-75%, -50%) rotate(25deg); /* Center the numbers */
+  width: 100%;
+  text-align: center;
+}
+
+.slot .number {
+  font-size: 30px; /* Increase the font size of the numbers */
+}
+
+.slot.red {
+  background-color: red;
+}
+
+.slot.black {
+  background-color: black;
+}
+
+.bet-buttons {
+  margin-top: 20px;
+}
+
+.bet-buttons button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+
+.arrow-container {
+  position: absolute;
+  top: 29%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.arrow {
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-bottom: 40px solid blue; /* white arrow */
+  rotate: 180deg;
+}
