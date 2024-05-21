@@ -9,7 +9,7 @@ Make sure to have a blockchain running on `localhost:8545`.
 
 First clone the repository:
 ```bash
-git clone 
+git clone https://github.com/Nanouille-B/roulette-eth.git
 ```
 
 Then, install the dependencies in the `contrat_hardhat` folder and deploy the contract:
