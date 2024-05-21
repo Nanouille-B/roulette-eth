@@ -9,7 +9,7 @@ contract RouletteContract {
     address public winner;
     uint randNonce = 0;
 
-    event SpinResult(address indexed player, bool won, uint256 payout, uint256 contractBalance);
+    event SpinResult(address indexed player, bool won, uint256 payout, uint256 winningColor);
 
     constructor() {
         owner = msg.sender;
@@ -24,18 +24,18 @@ contract RouletteContract {
         
         if (winningColor == betColor) {
             uint256 payout = betAmount * 2;
-            emit SpinResult(msg.sender, true, payout, address(this).balance); // Emit event for winning
+            emit SpinResult(msg.sender, true, payout, betColor); // Emit event for winning
             payable(msg.sender).transfer(payout); // Pay out double the bet amount for winning
         } else {
             uint256 payout = 0;
-            emit SpinResult(msg.sender, false, payout, address(this).balance); // Emit event for losing
+            emit SpinResult(msg.sender, false, payout, 1-betColor); // Emit event for losing
         }
     }
 
 
     function randomWinningColor() private returns (uint256) {
         randNonce++;
-        return uint(keccak256(abi.encodePacked(block.timestamp, msg.sender, randNonce))) % 2;
+        return uint(keccak256(abi.encodePacked(block.timestamp))) % 2;
     }
 
     // Function to fund the contract

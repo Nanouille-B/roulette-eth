@@ -23,16 +23,21 @@ if (window.ethereum) {
 const numbers = Array.from({ length: 8 }, (_, i) => i);
 const colors = numbers.map(n => (n % 2 === 0 ? 'black' : 'red'));
 
+const getRandomNumberForColor = (color:string) => {
+    const filteredNumbers = numbers.filter((_, index) => colors[index] === color);
+    const randomIndex = Math.floor(Math.random() * filteredNumbers.length);
+    return filteredNumbers[randomIndex];
+};
+
 const NumberRoulette: React.FC = () => {
     const [spinning, setSpinning] = useState(false); // is the wheel spinning?
     const [rotation, setRotation] = useState(0); // current rotation of the wheel
     const [betAmount, setBetAmount] = useState(''); // amount of the bet
-    const [winColor, setWinColor] = useState(0); // winning number
     const [result, setResult] = useState(''); // result of the spin
     const [showResult, setShowResult] = useState(false); // show the result
     const [account, setAccount] = useState(''); // current account
 
-    const contractAddress = '0x5bC22E8e2E756017409f434e422238B9bf8d2A42'; // Replace with your deployed contract address
+    const contractAddress = '0x33a50F9Fcbb32366b4C2aD1923eB92A454E5B061'; // Replace with your deployed contract address
     const contract = new web3.eth.Contract(RouletteContract.abi, contractAddress);
     
     useEffect(() => {
@@ -46,9 +51,9 @@ const NumberRoulette: React.FC = () => {
         }
       }, []);
 
-    const spin = () => {
+    const spin = (colorNumber : number) => {
         setSpinning(true);
-        setRotation(getRotationForWinningNumber());
+        setRotation(getRotationForWinningNumber(colorNumber));
 
         setTimeout(() => {
             setSpinning(false);
@@ -69,16 +74,13 @@ const NumberRoulette: React.FC = () => {
                 // Setting up the event listener before sending the transaction
                 contract.events.SpinResult({ filter: { player: account } })
                 .on('data', event => {
-                    const { player, won, payout, balance } = event.returnValues; 
+                    const { player, won, payout, winningColor } = event.returnValues; 
                     if (won === true) {
-                        setWinColor(betColor);
                         setResult(`Congratulations! You won ${web3.utils.fromWei(payout as Numbers, 'ether')} ETH.`);
                     } else {
-                        setWinColor(1 - betColor);
                         setResult('Sorry, you lost.');
                     }
-
-                    spin();
+                    spin(winningColor as number);
                 });
 
                 // Send the transaction
@@ -96,12 +98,13 @@ const NumberRoulette: React.FC = () => {
         }
       };
 
-      const getRotationForWinningNumber = () => {
+      const getRotationForWinningNumber = (colorNumber : number) => {
         if (result !== null) {
             // Calculate random spins to simulate spinning
             const randomSpins = Math.floor(Math.random() * 30 + 10) * 360;
             // Calculate the rotation angle for the winning number
-            const winningRotation = (360 / numbers.length) * (2*Math.floor(Math.random()*numbers.length/2) + winColor);
+            const randomNumber = getRandomNumberForColor(colors[colorNumber]);
+            const winningRotation = (360 / numbers.length) * randomNumber;
             // Calculate the total rotation to align the winning number at the top
             const totalRotation = randomSpins + winningRotation;
             // Offset by half a slot to center the winning number
@@ -123,7 +126,7 @@ const NumberRoulette: React.FC = () => {
                 <div
                     className={`wheel ${spinning ? 'spinning' : ''}`}
                     style={{
-                        transform: `rotate(${getRotationForWinningNumber()}deg)`, // Use the calculated rotation for the wheel
+                        transform: `rotate(${rotation}deg)`, // Use the calculated rotation for the wheel
                         transitionDuration: spinning ? '2s' : '0s' // Set transition duration to 2s when spinning, 0s otherwise
                     }}
                 >
@@ -152,11 +155,11 @@ const NumberRoulette: React.FC = () => {
                         }
                     }}
                 ></input>
-                <button onClick={() => handleBet('red')} disabled={spinning}>
-                    Bet on Red
+                <button onClick={() => handleBet('red')} disabled={spinning} id="redBet">
+                    Red
                 </button>
-                <button onClick={() => handleBet('black')} disabled={spinning}>
-                    Bet on Black
+                <button onClick={() => handleBet('black')} disabled={spinning} id="blackBet">
+                    Black
                 </button>
                 {(result === null || !showResult) ? (
                     <p>Result not drawn yet</p>

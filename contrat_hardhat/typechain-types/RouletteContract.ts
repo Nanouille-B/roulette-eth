@@ -83,19 +83,19 @@ export namespace SpinResultEvent {
     player: AddressLike,
     won: boolean,
     payout: BigNumberish,
-    contractBalance: BigNumberish
+    winningColor: BigNumberish
   ];
   export type OutputTuple = [
     player: string,
     won: boolean,
     payout: bigint,
-    contractBalance: bigint
+    winningColor: bigint
   ];
   export interface OutputObject {
     player: string;
     won: boolean;
     payout: bigint;
-    contractBalance: bigint;
+    winningColor: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
